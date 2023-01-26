@@ -1,5 +1,7 @@
 package br.com.zero.to.hero.productms.service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
@@ -15,21 +17,37 @@ public class ProductServiceImpl implements ProductService {
 
     @Autowired
     private ProductRepository productRepository;
+    
+    @Autowired
+    ModelMapper mapper;
 
     @Override
     public Optional<ProductDTO> create(ProductDTO request) {
-        ModelMapper mapper = new ModelMapper();
-        //Mapear os valores recebidos na request para a classe Product
+
+        // Mapear os valores recebidos na request para a classe Product
         Product product = mapper.map(request, Product.class);
 
-        //Salvar e atualizar o produto no banco
+        // Salvar e atualizar o produto no banco
         productRepository.saveAndFlush(product);
 
-        //Mapear os valores do produto para a classe ProductDTO
+        // Mapear os valores do produto para a classe ProductDTO
         ProductDTO response = mapper.map(product, ProductDTO.class);
 
-        //Retornar a res
+        // Retornar a res
         return Optional.of(response);
+    }
+
+    @Override
+    public List<ProductDTO> getAll() {
+        List<Product> products = productRepository.findAll();
+        List<ProductDTO> productsDTO = new ArrayList<>();
+
+        products.forEach(product -> {
+            ProductDTO response = mapper.map(product, ProductDTO.class);
+            productsDTO.add(response);
+        });
+
+        return productsDTO;
     }
 
 }
