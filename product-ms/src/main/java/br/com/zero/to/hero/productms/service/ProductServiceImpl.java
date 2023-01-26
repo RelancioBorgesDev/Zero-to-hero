@@ -17,7 +17,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Autowired
     private ProductRepository productRepository;
-    
+
     @Autowired
     ModelMapper mapper;
 
@@ -48,6 +48,17 @@ public class ProductServiceImpl implements ProductService {
         });
 
         return productsDTO;
+    }
+
+    @Override
+    public Optional<ProductDTO> getById(Long id) {
+        Optional<Product> product = productRepository.findById(id);
+
+        if (product.isPresent()) {
+            return Optional.of(mapper.map(product.get(), ProductDTO.class));
+        }
+        
+        return Optional.empty();
     }
 
 }
